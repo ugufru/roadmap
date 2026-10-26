@@ -43,7 +43,9 @@ Three Swift files in `Roadmap/`:
 - `HTMLDocument.swift`: a read-only `FileDocument` for `public.html`.
 - `WebView.swift`: a `WKWebView` wrapper. Its navigation delegate lets
   same-page links through and hands every other clicked link to
-  `NSWorkspace.shared.open`.
+  `NSWorkspace.shared.open`. It also watches the file and reloads the page,
+  keeping the scroll position, whenever the file is rewritten or replaced
+  (for example when `issues.html` is regenerated).
 
 The app is sandboxed with read-only access to files the user opens. It also
 has the outgoing-network entitlement: WebKit's helper processes need it even
