@@ -24,6 +24,12 @@ xcodebuild -project Roadmap.xcodeproj -scheme Roadmap -configuration Release \
 open build/Build/Products/Release/Roadmap.app
 ```
 
+To open a file in it from the command line, give `open -a` an absolute path:
+
+```sh
+open -a "$PWD/build/Build/Products/Release/Roadmap.app" path/to/issues.html
+```
+
 If `xcode-select -p` points at the Command Line Tools rather than Xcode,
 prefix the command with
 `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
@@ -39,7 +45,9 @@ Three Swift files in `Roadmap/`:
   same-page links through and hands every other clicked link to
   `NSWorkspace.shared.open`.
 
-The app is sandboxed with read-only access to files the user opens. The page
+The app is sandboxed with read-only access to files the user opens. It also
+has the outgoing-network entitlement: WebKit's helper processes need it even
+to render a local page, and without it the window stays blank. The page
 is expected to be self-contained (inline CSS and JS), which is how
 `issues.html` is generated. Relative references to sibling files will not load.
 
