@@ -7,6 +7,13 @@ File > Open (or drag it onto the Dock icon), it renders in a window, and
 File > Close / Quit behave as usual. Links inside the page (`#anchors`) work in
 place. Any link that leaves the page opens in your default browser.
 
+The window follows the file: when `issues.html` is regenerated, the page
+reloads and keeps its scroll position. Leave it open beside your editor or
+terminal and it stays current.
+
+On launch the app shows the Open panel. Open Recent remembers files across
+launches.
+
 ## Requirements
 
 - macOS 14 or later
