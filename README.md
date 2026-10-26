@@ -75,3 +75,7 @@ needs a paid Apple Developer Program membership.
    publish that.
 
 Hardened Runtime, which notarization requires, is already enabled.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
