@@ -10,7 +10,7 @@ struct WebView: NSViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeNSView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        let webView = PageWebView()
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
         context.coordinator.load(html, baseURL: baseURL, into: webView)
@@ -24,6 +24,14 @@ struct WebView: NSViewRepresentable {
 
     static func dismantleNSView(_ webView: WKWebView, coordinator: Coordinator) {
         coordinator.stopWatching()
+    }
+
+    /// Keeps undo for typing in the page (e.g. a search field) to itself. By
+    /// default it would use the document's undo manager, which marks the
+    /// read-only document as edited and makes AppKit offer to duplicate it.
+    final class PageWebView: WKWebView {
+        private let pageUndoManager = UndoManager()
+        override var undoManager: UndoManager? { pageUndoManager }
     }
 
     @MainActor
