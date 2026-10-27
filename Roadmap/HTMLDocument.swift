@@ -1,20 +1,30 @@
-import SwiftUI
-import UniformTypeIdentifiers
+import AppKit
 
-/// An HTML file opened read-only.
-struct HTMLDocument: FileDocument {
-    static let readableContentTypes: [UTType] = [.html]
+/// An HTML file opened read-only. A viewer never has changes to save, so it
+/// never asks anything on close or quit.
+@objc(HTMLDocument)
+final class HTMLDocument: NSDocument {
+    // Set once by read(from:ofType:), which AppKit calls before making windows.
+    nonisolated(unsafe) private var html = ""
 
-    let html: String
+    override init() {
+        super.init()
+        // Typing in the page (e.g. a search field) must not count as an edit.
+        hasUndoManager = false
+    }
 
-    init(configuration: ReadConfiguration) throws {
-        guard let data = configuration.file.regularFileContents else {
-            throw CocoaError(.fileReadCorruptFile)
-        }
+    override class var autosavesInPlace: Bool { false }
+    override class var writableTypes: [String] { [] }
+    override var isDocumentEdited: Bool { false }
+    override func updateChangeCount(_ change: NSDocument.ChangeType) {}
+
+    override func read(from data: Data, ofType typeName: String) throws {
         html = String(decoding: data, as: UTF8.self)
     }
 
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-        FileWrapper(regularFileWithContents: Data(html.utf8))
+    override func makeWindowControllers() {
+        let controller = PageWindowController()
+        addWindowController(controller)
+        controller.show(html, fileURL: fileURL)
     }
 }

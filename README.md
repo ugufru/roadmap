@@ -43,16 +43,22 @@ prefix the command with
 
 ## How it works
 
-Three Swift files in `Roadmap/`:
+An AppKit document app, in three Swift files in `Roadmap/`:
 
-- `RoadmapApp.swift`: a SwiftUI `DocumentGroup(viewing:)`, which supplies the
-  File menu, Open Recent and window management. There is no New or Save.
-- `HTMLDocument.swift`: a read-only `FileDocument` for `public.html`.
-- `WebView.swift`: a `WKWebView` wrapper. Its navigation delegate lets
-  same-page links through and hands every other clicked link to
-  `NSWorkspace.shared.open`. It also watches the file and reloads the page,
+- `AppDelegate.swift`: starts the app, builds the menus, and shows the Open
+  panel when there is no document. There is no New or Save.
+- `HTMLDocument.swift`: an `NSDocument` for `public.html`. It never reports
+  unsaved changes and has no undo manager, so typing in the page (a search
+  field, say) is never treated as an edit, and closing a window or quitting
+  never asks anything.
+- `PageWindowController.swift`: the window, holding a `WKWebView`. Same-page
+  links work in place; every other clicked link goes to
+  `NSWorkspace.shared.open`. It watches the file and reloads the page,
   keeping the scroll position, whenever the file is rewritten or replaced
   (for example when `issues.html` is regenerated).
+
+It uses AppKit rather than SwiftUI's `DocumentGroup` because SwiftUI's
+document class can't be told that a document never has changes to save.
 
 The app is sandboxed with read-only access to files the user opens. It also
 has the outgoing-network entitlement: WebKit's helper processes need it even
